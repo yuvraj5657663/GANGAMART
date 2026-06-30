@@ -4,6 +4,7 @@ const cors = require('cors');
 const connectDB = require('./src/config/db');
 const authRoutes = require('./src/routes/authRoutes');
 const productRoutes = require('./src/routes/productRoutes');
+const orderRoutes = require('./src/routes/orderRoutes');
 
 // Load env variables
 dotenv.config();
@@ -22,6 +23,7 @@ app.use(express.json()); // JSON data parse karne ke liye
 app.use('/api/auth', authRoutes);
 app.use('/api/auth', authRoutes);
 app.use('/api/products', productRoutes);
+app.use('/api/orders', orderRoutes);
 
 // Test Route
 app.get('/', (req, res) => {

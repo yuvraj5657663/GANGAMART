@@ -1,10 +1,10 @@
 import React, { useContext } from 'react';
 import { CartContext } from '../context/CartContext';
-import { Link } from 'react-router-dom';
+import { Link , useNavigate} from 'react-router-dom';
 
 const Cart = () => {
   const { cartItems, removeFromCart } = useContext(CartContext);
-
+  const navigate = useNavigate();
   // Total price calculate karne ke liye
   const totalPrice = cartItems.reduce((acc, item) => acc + item.price * item.qty, 0);
 
@@ -35,11 +35,11 @@ const Cart = () => {
                 </div>
 
                 <button 
-                  onClick={() => removeFromCart(item._id)}
-                  style={{ background: '#dc3545', color: '#fff', border: 'none', padding: '8px 12px', borderRadius: '4px', cursor: 'pointer' }}
-                >
-                  Remove
-                </button>
+                    onClick={() => navigate('/shipping')} // <-- Yeh line use hote hi upar ki warning hat jayegi
+                    style={{ width: '100%', background: '#007bff', color: '#fff', border: 'none', padding: '12px', borderRadius: '4px', cursor: 'pointer', fontWeight: 'bold', fontSize: '16px' }}
+                    >
+                    Proceed to Checkout
+                    </button>
               </div>
             ))}
           </div>
