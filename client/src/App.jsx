@@ -2,6 +2,8 @@ import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Navbar from './components/Navbar';
 import Home from './pages/Home';
+import Login from './pages/Login';
+import Register from './pages/Register';
 
 function App() {
   return (
@@ -9,8 +11,10 @@ function App() {
       <Navbar />
       <main style={{ minHeight: '80vh' }}>
         <Routes>
+          
           <Route path="/" element={<Home />} />
-          {/* Baaki ke routes jaise /login, /cart hum aage add karenge */}
+          <Route path="/login" element={<Login />} />       
+          <Route path="/register" element={<Register />} />
         </Routes>
       </main>
       <footer style={{ textAlign: 'center', padding: '1rem', background: '#f1f1f1' }}>
