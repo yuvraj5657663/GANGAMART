@@ -7,6 +7,8 @@ import Register from './pages/Register';
 import Cart from './pages/Cart';
 import Shipping from './pages/Shipping';
 import AdminDashboard from './pages/AdminDashboard';
+import ForgotPassword from './pages/ForgotPassword';
+import ResetPassword from './pages/ResetPassword';
 
 function App() {
   return (
@@ -14,6 +16,8 @@ function App() {
       <Navbar />
       <main style={{ minHeight: '80vh' }}>
         <Routes>
+          <Route path="/forgot-password" element={<ForgotPassword />} />
+          <Route path="/reset-password/:token" element={<ResetPassword />} />
           <Route path="/admin/dashboard" element={<AdminDashboard />} />
           <Route path="/" element={<Home />} />
           <Route path="/login" element={<Login />} />       

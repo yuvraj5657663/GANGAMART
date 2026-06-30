@@ -18,9 +18,7 @@ const app = express();
 app.use(cors());
 app.use(express.json()); // JSON data parse karne ke liye
 
-
-// routes middle ware
-app.use('/api/auth', authRoutes);
+// Routes Middleware (Har ek line sirf EK baar)
 app.use('/api/auth', authRoutes);
 app.use('/api/products', productRoutes);
 app.use('/api/orders', orderRoutes);
