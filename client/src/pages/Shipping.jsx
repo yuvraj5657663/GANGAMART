@@ -25,7 +25,7 @@ const Shipping = () => {
     }
 
     // Total bill nikalne ke liye
-    const totalPrice = cartItems.reduce((acc, item) => acc + item.price * item.qty, 0);
+    const totalPrice = cartItems.reduce((acc, item) => acc + item.price * (item.qty || 1), 0);
 
     try {
       // 2. Token ko Authorization header mein bhejna zaroori hai (protect middleware ke liye)
@@ -60,31 +60,85 @@ const Shipping = () => {
   };
 
   return (
-    <div style={{ maxWidth: '500px', margin: '3rem auto', padding: '2rem', border: '1px solid #ddd', borderRadius: '8px', boxShadow: '0 4px 6px rgba(0,0,0,0.1)' }}>
-      <h2 style={{ textAlign: 'center', marginBottom: '1.5rem' }}>Shipping Address 📍</h2>
-      
-      <form onSubmit={submitHandler}>
-        <div style={{ marginBottom: '1rem' }}>
-          <label>Address</label>
-          <input type="text" value={address} onChange={(e) => setAddress(e.target.value)} required style={{ width: '100%', padding: '8px', marginTop: '5px', borderRadius: '4px', border: '1px solid #ccc' }} />
-        </div>
-        <div style={{ marginBottom: '1rem' }}>
-          <label>City</label>
-          <input type="text" value={city} onChange={(e) => setCity(e.target.value)} required style={{ width: '100%', padding: '8px', marginTop: '5px', borderRadius: '4px', border: '1px solid #ccc' }} />
-        </div>
-        <div style={{ marginBottom: '1rem' }}>
-          <label>Postal Code</label>
-          <input type="text" value={postalCode} onChange={(e) => setPostalCode(e.target.value)} required style={{ width: '100%', padding: '8px', marginTop: '5px', borderRadius: '4px', border: '1px solid #ccc' }} />
-        </div>
-        <div style={{ marginBottom: '1.5rem' }}>
-          <label>Country</label>
-          <input type="text" value={country} onChange={(e) => setCountry(e.target.value)} required style={{ width: '100%', padding: '8px', marginTop: '5px', borderRadius: '4px', border: '1px solid #ccc' }} />
+    <div className="bg-slate-50 min-h-screen py-12 flex items-center justify-center px-4 sm:px-6 lg:px-8">
+      <div className="max-w-md w-full bg-white rounded-2xl shadow-xl border border-slate-100 p-8">
+        
+        {/* HEADING */}
+        <div className="text-center mb-8">
+          <h2 className="text-2xl font-black text-slate-900 tracking-tight flex items-center justify-center gap-2">
+            Shipping Address 📍
+          </h2>
+          <p className="text-slate-500 text-xs mt-1">Please enter your delivery details to complete the order.</p>
         </div>
         
-        <button type="submit" style={{ width: '100%', padding: '12px', background: '#e44d26', color: '#fff', border: 'none', borderRadius: '4px', cursor: 'pointer', fontWeight: 'bold', fontSize: '16px' }}>
-          Place Order (Cash on Delivery)
-        </button>
-      </form>
+        {/* FORM */}
+        <form onSubmit={submitHandler} className="space-y-5">
+          
+          {/* Address */}
+          <div>
+            <label className="block text-xs font-bold text-slate-700 tracking-wide uppercase mb-1">Address</label>
+            <input 
+              type="text" 
+              value={address} 
+              onChange={(e) => setAddress(e.target.value)} 
+              required 
+              placeholder="Flat / House No. / Street Name"
+              className="w-full bg-slate-50 text-slate-800 text-sm px-4 py-3 rounded-xl border border-slate-200 focus:outline-none focus:border-orange-500 focus:bg-white transition duration-200"
+            />
+          </div>
+
+          {/* City */}
+          <div>
+            <label className="block text-xs font-bold text-slate-700 tracking-wide uppercase mb-1">City</label>
+            <input 
+              type="text" 
+              value={city} 
+              onChange={(e) => setCity(e.target.value)} 
+              required 
+              placeholder="e.g. New Delhi"
+              className="w-full bg-slate-50 text-slate-800 text-sm px-4 py-3 rounded-xl border border-slate-200 focus:outline-none focus:border-orange-500 focus:bg-white transition duration-200"
+            />
+          </div>
+
+          {/* Grid Layout for Postal Code & Country */}
+          <div className="grid grid-cols-2 gap-4">
+            {/* Postal Code */}
+            <div>
+              <label className="block text-xs font-bold text-slate-700 tracking-wide uppercase mb-1">Postal Code</label>
+              <input 
+                type="text" 
+                value={postalCode} 
+                onChange={(e) => setPostalCode(e.target.value)} 
+                required 
+                placeholder="e.g. 110001"
+                className="w-full bg-slate-50 text-slate-800 text-sm px-4 py-3 rounded-xl border border-slate-200 focus:outline-none focus:border-orange-500 focus:bg-white transition duration-200"
+              />
+            </div>
+
+            {/* Country */}
+            <div>
+              <label className="block text-xs font-bold text-slate-700 tracking-wide uppercase mb-1">Country</label>
+              <input 
+                type="text" 
+                value={country} 
+                onChange={(e) => setCountry(e.target.value)} 
+                required 
+                placeholder="India"
+                className="w-full bg-slate-50 text-slate-800 text-sm px-4 py-3 rounded-xl border border-slate-200 focus:outline-none focus:border-orange-500 focus:bg-white transition duration-200"
+              />
+            </div>
+          </div>
+          
+          {/* Submit Button */}
+          <button 
+            type="submit" 
+            className="w-full bg-slate-900 hover:bg-orange-500 text-white font-bold py-3.5 rounded-xl transition duration-300 text-sm shadow-md mt-4 tracking-wide"
+          >
+            Place Order (Cash on Delivery)
+          </button>
+        </form>
+
+      </div>
     </div>
   );
 };

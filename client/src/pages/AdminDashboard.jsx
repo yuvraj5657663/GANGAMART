@@ -71,51 +71,98 @@ const AdminDashboard = () => {
   };
 
   return (
-    <div style={{ maxWidth: '900px', margin: '3rem auto', padding: '2rem', display: 'flex', gap: '2rem', flexWrap: 'wrap' }}>
-      
-      {/* LEFT SIDE: FORM */}
-      <div style={{ flex: '1', minWidth: '300px', padding: '1.5rem', border: '1px solid #ddd', borderRadius: '8px', boxShadow: '0 4px 6px rgba(0,0,0,0.05)' }}>
-        <h3 style={{ textAlign: 'center', marginBottom: '1rem' }}>Add New Product ⚙️</h3>
-        <form onSubmit={submitHandler}>
-          <div style={{ marginBottom: '0.8rem' }}><label>Name</label><input type="text" value={name} onChange={(e) => setName(e.target.value)} required style={{ width: '100%', padding: '6px', marginTop: '5px' }} /></div>
-          <div style={{ marginBottom: '0.8rem' }}><label>Price (₹)</label><input type="number" value={price} onChange={(e) => setPrice(e.target.value)} required style={{ width: '100%', padding: '6px', marginTop: '5px' }} /></div>
-          <div style={{ marginBottom: '0.8rem' }}><label>Description</label><textarea value={description} onChange={(e) => setDescription(e.target.value)} required style={{ width: '100%', padding: '6px', marginTop: '5px' }} /></div>
-          <div style={{ marginBottom: '0.8rem' }}><label>Image URL</label><input type="text" value={image} onChange={(e) => setImage(e.target.value)} style={{ width: '100%', padding: '6px', marginTop: '5px' }} /></div>
-          <div style={{ marginBottom: '0.8rem' }}><label>Category</label><input type="text" value={category} onChange={(e) => setCategory(e.target.value)} required style={{ width: '100%', padding: '6px', marginTop: '5px' }} /></div>
-          <div style={{ marginBottom: '1rem' }}><label>Stock</label><input type="number" value={countInStock} onChange={(e) => setCountInStock(e.target.value)} required style={{ width: '100%', padding: '6px', marginTop: '5px' }} /></div>
-          <button type="submit" style={{ width: '100%', padding: '10px', background: '#333', color: '#fff', border: 'none', cursor: 'pointer', fontWeight: 'bold' }}>Publish Product 📢</button>
-        </form>
-      </div>
+    <div className="bg-slate-50 min-h-screen py-10 px-4 sm:px-6 lg:px-8">
+      <div className="max-w-6xl mx-auto">
+        
+        {/* DASHBOARD HEADER */}
+        <h1 className="text-3xl font-black text-slate-900 mb-8 flex items-center gap-2">
+          Admin Control Center ⚙️
+        </h1>
 
-      {/* RIGHT SIDE: PRODUCT LIST */}
-      <div style={{ flex: '1.2', minWidth: '350px', padding: '1.5rem', border: '1px solid #ddd', borderRadius: '8px' }}>
-        <h3 style={{ textAlign: 'center', marginBottom: '1rem' }}>Manage Products 🗑️</h3>
-        <div style={{ maxHeight: '450px', overflowY: 'auto' }}>
-          <table style={{ width: '100%', borderCollapse: 'collapse' }}>
-            <thead>
-              <tr style={{ background: '#f4f4f4', textAlign: 'left' }}>
-                <th style={{ padding: '8px' }}>Product</th>
-                <th style={{ padding: '8px' }}>Price</th>
-                <th style={{ padding: '8px' }}>Action</th>
-              </tr>
-            </thead>
-            <tbody>
-              {products.map((prod) => (
-                <tr key={prod._id} style={{ borderBottom: '1px solid #eee' }}>
-                  <td style={{ padding: '8px' }}>{prod.name}</td>
-                  <td style={{ padding: '8px' }}>₹{prod.price}</td>
-                  <td style={{ padding: '8px' }}>
-                    <button onClick={() => deleteHandler(prod._id)} style={{ background: '#dc3545', color: '#fff', border: 'none', padding: '4px 8px', borderRadius: '4px', cursor: 'pointer' }}>
-                      Delete
-                    </button>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+        {/* RESPONSIVE LAYOUT SPLIT */}
+        <div className="grid grid-cols-1 lg:grid-cols-5 gap-8 items-start">
+          
+          {/* LEFT SIDE: FORM (2 Columns) */}
+          <div className="lg:col-span-2 bg-white rounded-2xl shadow-sm border border-slate-200/60 p-6">
+            <h3 className="text-lg font-bold text-slate-800 mb-5 border-b border-slate-100 pb-2 flex items-center gap-2">
+              Add New Product 📢
+            </h3>
+            
+            <form onSubmit={submitHandler} className="space-y-4">
+              <div>
+                <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">Product Name</label>
+                <input type="text" value={name} onChange={(e) => setName(e.target.value)} required placeholder="e.g. Sony Headphones" className="w-full bg-slate-50 text-slate-800 text-sm px-3 py-2.5 rounded-xl border border-slate-200 focus:outline-none focus:border-orange-500 focus:bg-white transition" />
+              </div>
+
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">Price (₹)</label>
+                  <input type="number" value={price} onChange={(e) => setPrice(e.target.value)} required placeholder="999" className="w-full bg-slate-50 text-slate-800 text-sm px-3 py-2.5 rounded-xl border border-slate-200 focus:outline-none focus:border-orange-500 focus:bg-white transition" />
+                </div>
+                <div>
+                  <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">Stock</label>
+                  <input type="number" value={countInStock} onChange={(e) => setCountInStock(e.target.value)} required placeholder="10" className="w-full bg-slate-50 text-slate-800 text-sm px-3 py-2.5 rounded-xl border border-slate-200 focus:outline-none focus:border-orange-500 focus:bg-white transition" />
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">Category</label>
+                <input type="text" value={category} onChange={(e) => setCategory(e.target.value)} required placeholder="Electronics, Clothing..." className="w-full bg-slate-50 text-slate-800 text-sm px-3 py-2.5 rounded-xl border border-slate-200 focus:outline-none focus:border-orange-500 focus:bg-white transition" />
+              </div>
+
+              <div>
+                <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">Image URL</label>
+                <input type="text" value={image} onChange={(e) => setImage(e.target.value)} placeholder="https://unsplash.com/..." className="w-full bg-slate-50 text-slate-800 text-xs px-3 py-2.5 rounded-xl border border-slate-200 focus:outline-none focus:border-orange-500 focus:bg-white transition" />
+              </div>
+
+              <div>
+                <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">Description</label>
+                <textarea value={description} onChange={(e) => setDescription(e.target.value)} required placeholder="Write details about the product..." rows="3" className="w-full bg-slate-50 text-slate-800 text-sm px-3 py-2.5 rounded-xl border border-slate-200 focus:outline-none focus:border-orange-500 focus:bg-white transition" />
+              </div>
+
+              <button type="submit" className="w-full bg-slate-900 hover:bg-orange-500 text-white font-bold py-3 rounded-xl transition duration-300 text-sm shadow-sm tracking-wide">
+                Publish Product 🚀
+              </button>
+            </form>
+          </div>
+
+          {/* RIGHT SIDE: MANAGE PRODUCTS (3 Columns) */}
+          <div className="lg:col-span-3 bg-white rounded-2xl shadow-sm border border-slate-200/60 p-6">
+            <h3 className="text-lg font-bold text-slate-800 mb-5 border-b border-slate-100 pb-2 flex items-center gap-2">
+              Manage Live Products 🗑️
+            </h3>
+            
+            <div className="max-h-[510px] overflow-y-auto rounded-xl border border-slate-100 shadow-inner">
+              <table className="w-full border-collapse text-left text-sm text-slate-600">
+                <thead className="bg-slate-900 text-white sticky top-0 text-xs font-bold tracking-wider uppercase">
+                  <tr>
+                    <th className="px-4 py-3">Product Name</th>
+                    <th className="px-4 py-3">Price</th>
+                    <th className="px-4 py-3 text-center">Action</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-slate-100 bg-white">
+                  {products.map((prod) => (
+                    <tr key={prod._id} className="hover:bg-slate-50/80 transition duration-150">
+                      <td className="px-4 py-3.5 font-bold text-slate-800 line-clamp-1 mt-1">{prod.name}</td>
+                      <td className="px-4 py-3.5 font-semibold text-slate-900">₹{prod.price}</td>
+                      <td className="px-4 py-3.5 text-center">
+                        <button 
+                          onClick={() => deleteHandler(prod._id)} 
+                          className="bg-rose-50 hover:bg-rose-100 text-rose-600 font-bold px-3 py-1.5 rounded-lg text-xs transition duration-200 border border-rose-100"
+                        >
+                          Delete
+                        </button>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </div>
+
         </div>
       </div>
-
     </div>
   );
 };
