@@ -3,28 +3,28 @@ const User = require('../models/User');
 
 const protect = async (req, res, next) => {
     let token;
-
-    // Check karein ki headers mein token hai ya nahi
     if (req.headers.authorization && req.headers.authorization.startsWith('Bearer')) {
         try {
-            // "Bearer TOKEN_VALUE" se token nikaalein
             token = req.headers.authorization.split(' ')[1];
-
-            // Token decode karein
             const decoded = jwt.verify(token, process.env.JWT_SECRET);
-
-            // User ka data request object mein daal dein (password hata kar)
             req.user = await User.findById(decoded.id).select('-password');
-
             next();
         } catch (error) {
             res.status(401).json({ message: 'Not authorized, token failed' });
         }
     }
-
     if (!token) {
         res.status(401).json({ message: 'Not authorized, no token' });
     }
 };
 
-module.exports = { protect };
+// 🔥 Naya Admin Middleware
+const admin = (req, res, next) => {
+    if (req.user ) {
+        next(); // Agar user admin hai, toh aage badhne do
+    } else {
+        res.status(403).json({ message: 'Not authorized as an admin' });
+    }
+};
+
+module.exports = { protect, admin }; // Dono ko export kiya

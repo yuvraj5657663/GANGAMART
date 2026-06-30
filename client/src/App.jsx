@@ -6,6 +6,7 @@ import Login from './pages/Login';
 import Register from './pages/Register';
 import Cart from './pages/Cart';
 import Shipping from './pages/Shipping';
+import AdminDashboard from './pages/AdminDashboard';
 
 function App() {
   return (
@@ -13,7 +14,7 @@ function App() {
       <Navbar />
       <main style={{ minHeight: '80vh' }}>
         <Routes>
-          
+          <Route path="/admin/dashboard" element={<AdminDashboard />} />
           <Route path="/" element={<Home />} />
           <Route path="/login" element={<Login />} />       
           <Route path="/register" element={<Register />} />

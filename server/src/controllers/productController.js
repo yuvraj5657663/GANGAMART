@@ -13,6 +13,7 @@ const getProducts = async (req, res) => {
 
 // @desc    Create a product (Admin feature ideally, but keeping it simple for now)
 // @route   POST /api/products
+// @route   POST /api/products
 const createProduct = async (req, res) => {
     try {
         const { name, description, price, image, category, countInStock } = req.body;
@@ -32,4 +33,22 @@ const createProduct = async (req, res) => {
     }
 };
 
-module.exports = { getProducts, createProduct };
+// @desc    Delete a product
+// @route   DELETE /api/products/:id
+// @access  Private/Admin
+const deleteProduct = async (req, res) => {
+    try {
+        const product = await Product.findById(req.params.id);
+        if (product) {
+            await product.deleteOne();
+            res.json({ message: 'Product removed successfully' });
+        } else {
+            res.status(404).json({ message: 'Product not found' });
+        }
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+};
+
+// Dono ko export list mein jodiye (jo file ke end mein hoti hai)
+module.exports = { getProducts, createProduct, deleteProduct };
