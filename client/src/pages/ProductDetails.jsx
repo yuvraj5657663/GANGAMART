@@ -3,33 +3,45 @@ import { useParams, useNavigate, Link } from 'react-router-dom';
 import axios from 'axios';
 
 const ProductDetails = () => {
-  const { id } = useParams(); // URL se id nikalne ke liye
+  const { id } = useParams();
   const navigate = useNavigate();
   
   const [product, setProduct] = useState(null);
-  const [qty, setQty] = useState(1);
+  const [qty, setQty] = useState(1); // Yeh quantity state hai
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
   useEffect(() => {
-  const fetchProduct = async () => {
-    try {
-      setLoading(true);
-      // 🔥 Yahan se http://localhost:5000 hata kar simple relative URL rakhein
-      const { data } = await axios.get(`/api/products/${id}`);
-      setProduct(data);
-      setLoading(false);
-    } catch (err) {
-      setError(err.response && err.response.data.message ? err.response.data.message : err.message);
-      setLoading(false);
+    const fetchProduct = async () => {
+      try {
+        setLoading(true);
+        const { data } = await axios.get(`/api/products/${id}`);
+        setProduct(data);
+        setLoading(false);
+      } catch (err) {
+        setError(err.response && err.response.data.message ? err.response.data.message : err.message);
+        setLoading(false);
+      }
+    };
+
+    fetchProduct();
+  }, [id]);
+
+  // Quantity Badhane ka logic (+ Button)
+  const increaseQty = () => {
+    if (qty < product.countInStock) {
+      setQty(qty + 1);
     }
   };
 
-  fetchProduct();
-}, [id]);
+  // Quantity Ghatane ka logic (- Button)
+  const decreaseQty = () => {
+    if (qty > 1) {
+      setQty(qty - 1);
+    }
+  };
 
   const addToCartHandler = () => {
-    // Cart page par le jayenge query params ke sath taaki cart handle ho sake
     navigate(`/cart/${id}?qty=${qty}`);
   };
 
@@ -56,7 +68,7 @@ const ProductDetails = () => {
               />
             </div>
 
-            {/* Product Meta / Information */}
+            {/* Product Information */}
             <div className="flex flex-col justify-between">
               <div>
                 <span className="text-xs font-bold uppercase tracking-widest text-orange-500 bg-orange-500/10 px-3 py-1 rounded-full">
@@ -79,20 +91,33 @@ const ProductDetails = () => {
 
               {/* Action Box */}
               <div className="mt-8 border-t border-slate-800 pt-6">
+                
+                {/* 🔥 NEW PLUS/MINUS QUANTITY CONTROLLER */}
                 {product.countInStock > 0 && (
                   <div className="flex items-center justify-between mb-4 bg-slate-800/50 p-3 rounded-lg">
                     <span className="text-sm text-slate-400 font-medium">Select Quantity</span>
-                    <select 
-                      value={qty} 
-                      onChange={(e) => setQty(Number(e.target.value))}
-                      className="bg-slate-800 text-white border border-slate-700 rounded px-3 py-1 text-sm focus:outline-none focus:border-orange-500"
-                    >
-                      {[...Array(product.countInStock).keys()].map((x) => (
-                        <option key={x + 1} value={x + 1}>
-                          {x + 1}
-                        </option>
-                      ))}
-                    </select>
+                    
+                    <div className="flex items-center bg-slate-800 border border-slate-700 rounded-lg overflow-hidden">
+                      <button
+                        type="button"
+                        onClick={decreaseQty}
+                        disabled={qty <= 1}
+                        className="px-4 py-1.5 bg-slate-700/50 hover:bg-slate-700 text-sm font-bold transition disabled:opacity-30 disabled:cursor-not-allowed"
+                      >
+                        -
+                      </button>
+                      <span className="px-5 py-1.5 text-xs font-bold w-12 text-center">
+                        {qty}
+                      </span>
+                      <button
+                        type="button"
+                        onClick={increaseQty}
+                        disabled={qty >= product.countInStock}
+                        className="px-4 py-1.5 bg-slate-700/50 hover:bg-slate-700 text-sm font-bold transition disabled:opacity-30 disabled:cursor-not-allowed"
+                      >
+                        +
+                      </button>
+                    </div>
                   </div>
                 )}
 

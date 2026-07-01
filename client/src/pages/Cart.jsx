@@ -4,17 +4,28 @@ import { CartContext } from '../context/CartContext';
 
 const Cart = () => {
   const navigate = useNavigate();
-  // CartContext se cartItems, addToCart aur removeFromCart nikal rahe hain
   const { cartItems, addToCart, removeFromCart } = useContext(CartContext);
 
-  // Total items calculate karne ke liye
   const totalItems = cartItems.reduce((acc, item) => acc + (item.qty || 1), 0);
-
-  // Total price calculate karne ke liye
   const totalPrice = cartItems.reduce((acc, item) => acc + (item.qty || 1) * item.price, 0);
 
+  // Quantity Badhane ke liye function (+ Button)
+  const increaseQty = (item) => {
+    const newQty = (item.qty || 1) + 1;
+    if (newQty <= item.countInStock) {
+      addToCart({ ...item, qty: newQty });
+    }
+  };
+
+  // Quantity Ghatane ke liye function (- Button)
+  const decreaseQty = (item) => {
+    const newQty = (item.qty || 1) - 1;
+    if (newQty >= 1) {
+      addToCart({ ...item, qty: newQty });
+    }
+  };
+
   const checkoutHandler = () => {
-    // Agar user logged in nahi hoga toh login par bhejega, warna shipping par
     const userInfo = localStorage.getItem('userInfo');
     if (userInfo) {
       navigate('/shipping');
@@ -60,25 +71,38 @@ const Cart = () => {
                     </div>
                   </div>
 
-                  {/* Quantity & Delete Actions */}
+                  {/* Quantity Actions & Delete */}
                   <div className="flex items-center justify-between sm:justify-end gap-6 w-full sm:w-auto border-t sm:border-t-0 pt-3 sm:pt-0 border-slate-800">
-                    {/* Qty Selector */}
-                    {item.countInStock > 0 && (
-                      <select
-                        value={item.qty || 1}
-                        onChange={(e) => addToCart({ ...item, qty: Number(e.target.value) })}
-                        className="bg-slate-800 text-white border border-slate-700 rounded px-2.5 py-1 text-xs focus:outline-none focus:border-orange-500"
-                      >
-                        {[...Array(item.countInStock).keys()].map((x) => (
-                          <option key={x + 1} value={x + 1}>
-                            {x + 1}
-                          </option>
-                        ))}
-                      </select>
+                    
+                    {/* 🔥 NEW PLUS/MINUS QUANTITY CONTROLLER */}
+                    {item.countInStock > 0 ? (
+                      <div className="flex items-center bg-slate-800 border border-slate-700 rounded-lg overflow-hidden">
+                        <button
+                          type="button"
+                          onClick={() => decreaseQty(item)}
+                          disabled={(item.qty || 1) <= 1}
+                          className="px-3 py-1 bg-slate-700/50 hover:bg-slate-700 text-sm font-bold transition disabled:opacity-30 disabled:cursor-not-allowed"
+                        >
+                          -
+                        </button>
+                        <span className="px-4 py-1 text-xs font-bold w-10 text-center">
+                          {item.qty || 1}
+                        </span>
+                        <button
+                          type="button"
+                          onClick={() => increaseQty(item)}
+                          disabled={(item.qty || 1) >= item.countInStock}
+                          className="px-3 py-1 bg-slate-700/50 hover:bg-slate-700 text-sm font-bold transition disabled:opacity-30 disabled:cursor-not-allowed"
+                        >
+                          +
+                        </button>
+                      </div>
+                    ) : (
+                      <span className="text-xs text-red-400 font-bold bg-red-500/10 px-2 py-1 rounded">Out of Stock</span>
                     )}
 
                     {/* Total Item Price */}
-                    <span className="font-bold text-sm text-slate-200">
+                    <span className="font-bold text-sm text-slate-200 w-20 text-right">
                       ₹{(item.qty || 1) * item.price}
                     </span>
 
