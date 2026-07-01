@@ -50,5 +50,19 @@ const deleteProduct = async (req, res) => {
     }
 };
 
+const getProductsBySearch = async (req, res) => {
+    try {
+        const { q } = req.query;
+        // Limit lagayi hai taaki 5 se zyada results dropdown mein na aayein
+        const products = await Product.find({
+            name: { $regex: q, $options: 'i' }
+        }).limit(5).select('name price image'); 
+        
+        res.status(200).json(products);
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+};
+
 // Dono ko export list mein jodiye (jo file ke end mein hoti hai)
-module.exports = { getProducts, createProduct, deleteProduct };
+module.exports = { getProducts, createProduct, deleteProduct, getProductsBySearch };
