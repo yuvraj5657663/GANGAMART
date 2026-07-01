@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useContext } from 'react';
+import { Link } from 'react-router-dom'; // 🔥 1. Link Import kiya
 import axios from 'axios';
 import { CartContext } from '../context/CartContext';
 
@@ -23,7 +24,6 @@ const Home = () => {
     fetchProducts();
   }, []);
 
-  // Tailwind Loading Spinner
   if (loading) {
     return (
       <div className="flex justify-center items-center h-96">
@@ -32,7 +32,6 @@ const Home = () => {
     );
   }
 
-  // Tailwind Error Alert
   if (error) {
     return (
       <div className="max-w-md mx-auto mt-10 p-4 bg-rose-50 text-rose-700 rounded-lg border border-rose-200 text-center font-semibold">
@@ -67,8 +66,8 @@ const Home = () => {
                 key={product._id} 
                 className="bg-white rounded-xl shadow-sm border border-slate-100 overflow-hidden hover:shadow-xl hover:-translate-y-1 transition duration-300 flex flex-col justify-between"
               >
-                {/* Product Image Container */}
-                <div className="h-56 bg-slate-100 relative overflow-hidden group">
+                {/* 🔥 2. Image ko Link se wrap kiya taaki click ho sake */}
+                <Link to={`/product/${product._id}`} className="block h-56 bg-slate-100 relative overflow-hidden group cursor-pointer">
                   <img 
                     src={product.image || 'https://images.unsplash.com/photo-1523275335684-37898b6baf30'} 
                     alt={product.name} 
@@ -79,14 +78,17 @@ const Home = () => {
                       {product.category}
                     </span>
                   )}
-                </div>
+                </Link>
 
                 {/* Product Info */}
                 <div className="p-5 flex-grow flex flex-col justify-between">
                   <div>
-                    <h2 className="text-lg font-bold text-slate-800 line-clamp-1 mb-1">
-                      {product.name}
-                    </h2>
+                    {/* 🔥 3. Title ko bhi Link se wrap kiya taaki naam par bhi click ho sake */}
+                    <Link to={`/product/${product._id}`} className="hover:text-orange-500 transition duration-200">
+                      <h2 className="text-lg font-bold text-slate-800 line-clamp-1 mb-1 cursor-pointer">
+                        {product.name}
+                      </h2>
+                    </Link>
                     <p className="text-slate-500 text-xs line-clamp-2 mb-4">
                       {product.description}
                     </p>
@@ -110,6 +112,7 @@ const Home = () => {
                     >
                       Add to Cart 🛒
                     </button>
+                   
                   </div>
                 </div>
 
