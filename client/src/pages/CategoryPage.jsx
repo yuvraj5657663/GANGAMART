@@ -1,10 +1,11 @@
 import React, { useState, useEffect, useContext } from 'react';
-import { useParams, Link } from 'react-router-dom';
+import { useParams, Link, useNavigate } from 'react-router-dom'; // 🔥 useNavigate add kiya redirection ke liye
 import axios from 'axios';
 import { CartContext } from '../context/CartContext';
 
 const CategoryPage = () => {
-  const { categoryName } = useParams(); // URL se category ka naam uthayega
+  const { categoryName } = useParams(); 
+  const navigate = useNavigate(); // 🔥 Navigation hook initialized
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
@@ -27,6 +28,14 @@ const CategoryPage = () => {
     fetchCategoryProducts();
   }, [categoryName]);
 
+  // 🔥 Direct Buy Now Function
+  const buyNowHandler = (product) => {
+    if (product.countInStock > 0) {
+      addToCart({ ...product, qty: 1 }); // Default 1 quantity cart mein daal rahe hain
+      navigate('/cart'); // Seedha cart page par redirect kar rahe hain
+    }
+  };
+
   if (loading) {
     return (
       <div className="flex justify-center items-center h-96 bg-slate-950 text-white">
@@ -46,7 +55,7 @@ const CategoryPage = () => {
               ⬅️ Back to Home
             </Link>
             <h1 className="text-3xl font-black capitalize tracking-tight">
-              Category: <span className="text-orange-500">{categoryName}</span> 🌟
+              Category: <span className="text-orange-500">{categoryName}</span> 
             </h1>
           </div>
           <p className="text-sm text-slate-400 font-medium">
@@ -96,17 +105,33 @@ const CategoryPage = () => {
                       </span>
                     </div>
 
-                    <button 
-                      onClick={() => addToCart(product)}
-                      disabled={product.countInStock === 0}
-                      className={`w-full font-bold py-2 rounded-lg text-xs transition duration-300 ${
-                        product.countInStock > 0 
-                          ? 'bg-orange-500 hover:bg-orange-600 text-slate-950' 
-                          : 'bg-slate-800 text-slate-500 cursor-not-allowed'
-                      }`}
-                    >
-                      {product.countInStock > 0 ? 'Add to Cart 🛒' : 'Out of Stock'}
-                    </button>
+                    {/* 🔥 DUAL BUTTONS GRID FOR CATEGORY CARD */}
+                    <div className="grid grid-cols-2 gap-2 mt-2">
+                      <button 
+                        onClick={() => addToCart({ ...product, qty: 1 })}
+                        disabled={product.countInStock === 0}
+                        className={`font-bold py-2.5 rounded-lg text-xs transition duration-300 ${
+                          product.countInStock > 0 
+                            ? 'bg-slate-800 hover:bg-slate-700 text-white border border-slate-700' 
+                            : 'bg-slate-800 text-slate-500 cursor-not-allowed'
+                        }`}
+                      >
+                        Cart
+                      </button>
+
+                      <button 
+                        onClick={() => buyNowHandler(product)}
+                        disabled={product.countInStock === 0}
+                        className={`font-bold py-2.5 rounded-lg text-xs transition duration-300 ${
+                          product.countInStock > 0 
+                            ? 'bg-orange-500 hover:bg-orange-600 text-slate-950' 
+                            : 'bg-slate-800 text-slate-500 cursor-not-allowed'
+                        }`}
+                      >
+                        Buy Now
+                      </button>
+                    </div>
+
                   </div>
                 </div>
 
