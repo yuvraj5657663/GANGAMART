@@ -1,21 +1,28 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react'; // 🔥 CartContext ke liye useContext add kiya
 import { Link, useNavigate } from 'react-router-dom';
 import axios from 'axios';
+import { CartContext } from '../context/CartContext'; // 🔥 CartContext import kiya
 
 const Navbar = () => {
   const navigate = useNavigate();
   const [searchTerm, setSearchTerm] = useState('');
   const [results, setResults] = useState([]);
   
-  // Storage se user data nikal rahe hain
+  // 🔥 Cart items nikalne ke liye aur badge count calculate karne ke liye
+  const { cartItems } = useContext(CartContext);
+  const cartBadgeCount = cartItems.reduce((acc, item) => acc + (item.qty || 1), 0);
+
+  // 🔥 Static categories list jo Navbar mein link banayegi
+  const categories = ['Electronics', 'Clothing', 'Books', 'Shoes'];
+  
   const userInfo = localStorage.getItem('userInfo') ? JSON.parse(localStorage.getItem('userInfo')) : null;
 
-  // Live Search logic jo dropdown dikhayega
   useEffect(() => {
     const fetchResults = async () => {
       if (searchTerm.length > 2) {
         try {
-          const { data } = await axios.get(`http://localhost:5000/api/products/search?q=${searchTerm}`);
+          // 🔥 Hardcoded port hata kar clean relative URL kar diya proxy ke liye
+          const { data } = await axios.get(`/api/products/search?q=${searchTerm}`);
           setResults(data);
         } catch (error) { 
           console.error("Search fetch error:", error); 
@@ -45,7 +52,20 @@ const Navbar = () => {
             </Link>
           </div>
 
-          {/* 2. SEARCH BAR (Center mein dynamic dropdown ke sath) */}
+          {/* 🔥 2. CATEGORIES (Desktop Ke Liye Logo ke theek baad) */}
+          <div className="hidden lg:flex items-center space-x-4 ml-6">
+            {categories.map((cat) => (
+              <Link
+                key={cat}
+                to={`/category/${cat}`}
+                className="text-xs font-semibold text-slate-300 hover:text-orange-400 transition duration-200 capitalize"
+              >
+                {cat}
+              </Link>
+            ))}
+          </div>
+
+          {/* 3. SEARCH BAR */}
           <div className="relative w-1/3">
             <input
               type="text"
@@ -70,24 +90,30 @@ const Navbar = () => {
             )}
           </div>
 
-          {/* 3. NAV LINKS & AUTH */}
+          {/* 4. NAV LINKS & AUTH */}
           <div className="flex items-center space-x-6 font-medium text-sm">
             <Link to="/" className="hover:text-orange-400 transition duration-300 py-2">
               Home
             </Link>
             
-            <Link to="/cart" className="relative hover:text-orange-400 transition duration-300 py-2 flex items-center gap-1">
+            {/* 🔥 DYNAMIC CART LINK WITH LIVE BADGE */}
+            <Link to="/cart" className="relative hover:text-orange-400 transition duration-300 py-2 flex items-center gap-1 group">
               Cart 🛍️
+              {cartBadgeCount > 0 && (
+                <span className="absolute -top-1 -right-3 inline-flex items-center justify-center px-2 py-0.5 text-[10px] font-black leading-none text-slate-950 bg-orange-500 rounded-full transform scale-90 animate-pulse">
+                  {cartBadgeCount}
+                </span>
+              )}
             </Link>
 
-            {/* ADMIN DASHBOARD LINK (Sirf tabhi dikhega jab user real mein admin ho) */}
+            {/* ADMIN DASHBOARD LINK */}
             {userInfo && userInfo.isAdmin && (
               <Link to="/admin/dashboard" className="hover:text-orange-400 transition duration-300 py-2 text-slate-400">
                 Admin ⚙️
               </Link>
             )}
 
-            {/* AUTH BUTTONS (User info ya Login/Register button) */}
+            {/* AUTH BUTTONS */}
             {userInfo ? (
               <div className="flex items-center gap-4">
                 <span className="text-orange-300 text-xs bg-slate-800 px-3 py-1.5 rounded-full border border-slate-700">

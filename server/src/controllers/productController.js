@@ -82,5 +82,28 @@ const getProductById = async (req, res) => {
   }
 };
 
+
+
+// @desc    Get products by category
+// @route   GET /api/products/category/:categoryName
+// @access  Public
+const getProductsByCategory = async (req, res) => {
+  try {
+    const category = req.params.categoryName;
+    // Database mein case-insensitive search ke liye regex use kar rahe hain
+    const products = await Product.find({ 
+      category: { $regex: new RegExp("^" + category + "$", "i") } 
+    });
+
+    if (products.length > 0) {
+      res.json(products);
+    } else {
+      res.status(404).json({ message: `No products found in ${category} category` });
+    }
+  } catch (error) {
+    res.status(500).json({ message: 'Server Error', error: error.message });
+  }
+};
+
 // Dono ko export list mein jodiye (jo file ke end mein hoti hai)
-module.exports = { getProducts, createProduct, deleteProduct, getProductsBySearch, getProductById };
+module.exports = { getProducts, createProduct, deleteProduct, getProductsBySearch, getProductById, getProductsByCategory };

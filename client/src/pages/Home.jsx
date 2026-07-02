@@ -1,9 +1,10 @@
 import React, { useState, useEffect, useContext } from 'react';
-import { Link } from 'react-router-dom'; // 🔥 1. Link Import kiya
+import { Link, useNavigate } from 'react-router-dom'; // 🔥 useNavigate import kiya redirect ke liye
 import axios from 'axios';
 import { CartContext } from '../context/CartContext';
 
 const Home = () => {
+  const navigate = useNavigate(); // 🔥 Navigation hook initialized
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
@@ -23,6 +24,14 @@ const Home = () => {
 
     fetchProducts();
   }, []);
+
+  // 🔥 Direct Buy Now Function
+  const buyNowHandler = (product) => {
+    if (product.countInStock > 0) {
+      addToCart({ ...product, qty: 1 }); // Default 1 quantity cart mein push karega
+      navigate('/cart'); // Seedha cart page par bhej dega
+    }
+  };
 
   if (loading) {
     return (
@@ -47,7 +56,7 @@ const Home = () => {
         {/* HERO HEADING */}
         <div className="text-center mb-12">
           <h1 className="text-4xl font-extrabold text-slate-900 sm:text-5xl">
-            Trending Products 🔥
+            Trending Products
           </h1>
           <p className="mt-3 text-lg text-slate-500 max-w-2xl mx-auto">
             Explore our exclusive collection with top-notch quality and unbeatable prices.
@@ -66,7 +75,7 @@ const Home = () => {
                 key={product._id} 
                 className="bg-white rounded-xl shadow-sm border border-slate-100 overflow-hidden hover:shadow-xl hover:-translate-y-1 transition duration-300 flex flex-col justify-between"
               >
-                {/* 🔥 2. Image ko Link se wrap kiya taaki click ho sake */}
+                {/* Image Link */}
                 <Link to={`/product/${product._id}`} className="block h-56 bg-slate-100 relative overflow-hidden group cursor-pointer">
                   <img 
                     src={product.image || 'https://images.unsplash.com/photo-1523275335684-37898b6baf30'} 
@@ -83,7 +92,6 @@ const Home = () => {
                 {/* Product Info */}
                 <div className="p-5 flex-grow flex flex-col justify-between">
                   <div>
-                    {/* 🔥 3. Title ko bhi Link se wrap kiya taaki naam par bhi click ho sake */}
                     <Link to={`/product/${product._id}`} className="hover:text-orange-500 transition duration-200">
                       <h2 className="text-lg font-bold text-slate-800 line-clamp-1 mb-1 cursor-pointer">
                         {product.name}
@@ -105,13 +113,24 @@ const Home = () => {
                       </span>
                     </div>
 
-                    {/* Add to Cart Button */}
-                    <button 
-                      onClick={() => addToCart(product)}
-                      className="block w-full text-center bg-slate-900 hover:bg-orange-500 text-white font-semibold py-2.5 rounded-lg text-sm transition duration-300 shadow-sm"
-                    >
-                      Add to Cart 🛒
-                    </button>
+                    {/* 🔥 2 BUTTONS SIDE-BY-SIDE */}
+                    <div className="grid grid-cols-2 gap-2 mt-2">
+                      <button 
+                        onClick={() => addToCart({ ...product, qty: 1 })}
+                        disabled={product.countInStock === 0}
+                        className="bg-slate-900 hover:bg-slate-800 text-white font-semibold py-2.5 rounded-lg text-xs transition duration-300 shadow-sm disabled:opacity-40 disabled:cursor-not-allowed"
+                      >
+                        Add To Cart
+                      </button>
+
+                      <button 
+                        onClick={() => buyNowHandler(product)}
+                        disabled={product.countInStock === 0}
+                        className="bg-orange-500 hover:bg-orange-600 text-white font-bold py-2.5 rounded-lg text-xs transition duration-300 shadow-sm disabled:opacity-40 disabled:cursor-not-allowed"
+                      >
+                        Buy Now
+                      </button>
+                    </div>
                    
                   </div>
                 </div>
