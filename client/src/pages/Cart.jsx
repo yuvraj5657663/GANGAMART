@@ -4,26 +4,11 @@ import { CartContext } from '../context/CartContext';
 
 const Cart = () => {
   const navigate = useNavigate();
-  const { cartItems, addToCart, removeFromCart } = useContext(CartContext);
+  // 🔥 Context se updateQty ko nikal liya hai
+  const { cartItems, removeFromCart, updateQty } = useContext(CartContext);
 
   const totalItems = cartItems.reduce((acc, item) => acc + (item.qty || 1), 0);
   const totalPrice = cartItems.reduce((acc, item) => acc + (item.qty || 1) * item.price, 0);
-
-  // Quantity Badhane ke liye function (+ Button)
-  const increaseQty = (item) => {
-    const newQty = (item.qty || 1) + 1;
-    if (newQty <= item.countInStock) {
-      addToCart({ ...item, qty: newQty });
-    }
-  };
-
-  // Quantity Ghatane ke liye function (- Button)
-  const decreaseQty = (item) => {
-    const newQty = (item.qty || 1) - 1;
-    if (newQty >= 1) {
-      addToCart({ ...item, qty: newQty });
-    }
-  };
 
   const checkoutHandler = () => {
     const userInfo = localStorage.getItem('userInfo');
@@ -74,12 +59,13 @@ const Cart = () => {
                   {/* Quantity Actions & Delete */}
                   <div className="flex items-center justify-between sm:justify-end gap-6 w-full sm:w-auto border-t sm:border-t-0 pt-3 sm:pt-0 border-slate-800">
                     
-                    {/* 🔥 NEW PLUS/MINUS QUANTITY CONTROLLER */}
+                    {/* 🔥 QUANTITY CONTROLLER (Ab Context ke updateQty se chalega) */}
                     {item.countInStock > 0 ? (
                       <div className="flex items-center bg-slate-800 border border-slate-700 rounded-lg overflow-hidden">
                         <button
                           type="button"
-                          onClick={() => decreaseQty(item)}
+                          // 🔥 Minus click par item.qty - 1 bhej rahe hain direct context mein
+                          onClick={() => updateQty(item._id, (item.qty || 1) - 1)}
                           disabled={(item.qty || 1) <= 1}
                           className="px-3 py-1 bg-slate-700/50 hover:bg-slate-700 text-sm font-bold transition disabled:opacity-30 disabled:cursor-not-allowed"
                         >
@@ -90,7 +76,8 @@ const Cart = () => {
                         </span>
                         <button
                           type="button"
-                          onClick={() => increaseQty(item)}
+                          // 🔥 Plus click par item.qty + 1 bhej rahe hain direct context mein
+                          onClick={() => updateQty(item._id, (item.qty || 1) + 1)}
                           disabled={(item.qty || 1) >= item.countInStock}
                           className="px-3 py-1 bg-slate-700/50 hover:bg-slate-700 text-sm font-bold transition disabled:opacity-30 disabled:cursor-not-allowed"
                         >
