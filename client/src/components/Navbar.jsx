@@ -1,18 +1,16 @@
-import React, { useState, useEffect, useContext } from 'react'; // 🔥 CartContext ke liye useContext add kiya
+import React, { useState, useEffect, useContext } from 'react'; 
 import { Link, useNavigate } from 'react-router-dom';
 import axios from 'axios';
-import { CartContext } from '../context/CartContext'; // 🔥 CartContext import kiya
+import { CartContext } from '../context/CartContext'; 
 
 const Navbar = () => {
   const navigate = useNavigate();
   const [searchTerm, setSearchTerm] = useState('');
   const [results, setResults] = useState([]);
   
-  // 🔥 Cart items nikalne ke liye aur badge count calculate karne ke liye
   const { cartItems } = useContext(CartContext);
   const cartBadgeCount = cartItems.reduce((acc, item) => acc + (item.qty || 1), 0);
 
-  // 🔥 Static categories list jo Navbar mein link banayegi
   const categories = ['Electronics', 'Clothing', 'Books', 'Shoes'];
   
   const userInfo = localStorage.getItem('userInfo') ? JSON.parse(localStorage.getItem('userInfo')) : null;
@@ -21,7 +19,6 @@ const Navbar = () => {
     const fetchResults = async () => {
       if (searchTerm.length > 2) {
         try {
-          // 🔥 Hardcoded port hata kar clean relative URL kar diya proxy ke liye
           const { data } = await axios.get(`/api/products/search?q=${searchTerm}`);
           setResults(data);
         } catch (error) { 
@@ -38,6 +35,7 @@ const Navbar = () => {
     localStorage.removeItem('userInfo');
     alert('Logged out successfully! 👋');
     navigate('/login');
+    window.location.reload(); // State clear karne ke liye refresh zaroori hai
   };
 
   return (
@@ -52,7 +50,7 @@ const Navbar = () => {
             </Link>
           </div>
 
-          {/* 🔥 2. CATEGORIES (Desktop Ke Liye Logo ke theek baad) */}
+          {/* 2. CATEGORIES */}
           <div className="hidden lg:flex items-center space-x-4 ml-6">
             {categories.map((cat) => (
               <Link
@@ -96,7 +94,7 @@ const Navbar = () => {
               Home
             </Link>
             
-            {/* 🔥 DYNAMIC CART LINK WITH LIVE BADGE */}
+            {/* CART LINK */}
             <Link to="/cart" className="relative hover:text-orange-400 transition duration-300 py-2 flex items-center gap-1 group">
               Cart 🛍️
               {cartBadgeCount > 0 && (
@@ -106,19 +104,25 @@ const Navbar = () => {
               )}
             </Link>
 
-            {/* ADMIN DASHBOARD LINK */}
+            {/* 🔥 ADMIN DASHBOARD LINK (Path fixed to /admin matching your route) */}
             {userInfo && userInfo.isAdmin && (
-              <Link to="/admin/dashboard" className="hover:text-orange-400 transition duration-300 py-2 text-slate-400">
-                Admin ⚙️
+              <Link to="/admin" className="hover:text-orange-400 transition duration-300 py-2 text-amber-400 font-bold">
+                Admin 👑
               </Link>
             )}
 
             {/* AUTH BUTTONS */}
             {userInfo ? (
               <div className="flex items-center gap-4">
-                <span className="text-orange-300 text-xs bg-slate-800 px-3 py-1.5 rounded-full border border-slate-700">
+                {/* 🔥 DYNAMIC PROFILE LINK: Ab naam par click karne se user profile page par jayega */}
+                <Link 
+                  to="/profile" 
+                  className="text-orange-300 text-xs bg-slate-800 px-3 py-1.5 rounded-full border border-slate-700 hover:border-orange-500 hover:text-white transition duration-300"
+                  title="Click to view Profile"
+                >
                   👤 {userInfo.name}
-                </span>
+                </Link>
+                
                 <button
                   onClick={logoutHandler}
                   className="bg-red-600 hover:bg-red-700 text-white font-bold px-4 py-1.5 rounded transition duration-300 text-xs shadow-sm"
